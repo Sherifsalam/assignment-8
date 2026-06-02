@@ -1,0 +1,178 @@
+Question 1
+
+db.createCollection("books", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["title"],
+      properties: {
+        title: {
+          bsonType: "string",
+          minLength: 1,
+          description: "Title is required and must be a non-empty string."
+        }
+      }
+    }
+  },
+  validationLevel: "strict",
+  validationAction: "error"
+})
+
+
+
+Question 2
+ 
+db.authors.insertMany([{"name": "mohamed ali", "nationality": "Egyptian"}])
+
+
+Question 3
+
+db.createCollection("logs", {
+  capped: true,
+  size: 1048576
+})
+
+
+Question 4
+
+use books
+
+db.books.createIndex({ title: 1 })
+
+
+Question 5
+
+use books
+
+db.books.insertOne({
+    title: "The Great Gatsby"
+})
+
+
+Question 6
+
+db.books.insertMany([
+    { title: "The Great Gatsby", author: "F. Scott Fitzgerald", year: 1925 },
+    { title: "To Kill a Mockingbird", author: "Harper Lee", year: 1960 },
+    { title: "Future", author: "George Orwell", year: 1949 }
+])
+
+
+Question 7
+
+db.logs.insertOne({
+    book_id:"6a0a692df98984d5383ae90a",
+    status:"borrowed"
+})
+
+
+
+Question 8
+db.books.updateOne(
+    { title: "Future" },
+    { $set: { year: 2022 } }
+)
+
+Question 9
+db.books.findOne({ title: "Brave New World" })
+
+
+
+Question 10
+db.books.find({
+    year: {
+        $gte: 1990,
+        $lte: 2010
+    }
+})
+
+
+
+Question 11
+db.books.find({ genre: "Science Fiction" })
+
+
+
+Question 12
+db.books.find({}).sort({ year: -1 }).skip(2).limit(3)
+
+
+
+Question 13
+db.books.find({ year: { $type: "int" } })
+
+
+Question 14
+db.books.find({
+  genres: {
+    $nin: ["Horror", "Science Fiction"]
+  }
+})
+
+
+Question 15
+
+db.books.deleteMany({
+  publishedYear: { $lt: 2000 }
+})
+
+
+
+
+Question 16
+
+db.books.aggregate([
+  {
+    $match: {
+      year: { $gt: 2000 }
+    }
+  },
+  {
+    $sort: {
+      year: -1
+    }
+  }
+])
+
+
+
+
+Question 17
+db.books.aggregate([
+  {
+    $match: {
+      year: { $gt: 2000 }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      title: 1,
+      author: 1,
+      year: 1
+    }
+  }
+])
+
+
+Question 18
+db.books.aggregate([
+  {
+    $unwind: "$genres"
+  }
+])
+
+
+
+Question 19
+
+db.books.aggregate([
+  {
+    $lookup: {
+      from: "logs",
+      localField: "_id",
+      foreignField: "bookId",
+      as: "bookLogs"
+    }
+  }
+])
